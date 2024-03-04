@@ -53,6 +53,7 @@ RUN pip install --quiet \
     pip install \
       'jupyterlab_tensorboard_pro' \
       'jupyterlab-rise' \
+      'rise' \
     && \
     conda install --quiet --yes \
     -c conda-forge \
@@ -128,6 +129,8 @@ RUN pip install --quiet \
         'gradio' \
         'matplotlib' \
         'gdown' \
+        'RISE' \
+        'ipyvolume' \
         'opencv-python' \
     && \
     fix-permissions $CONDA_DIR && \
