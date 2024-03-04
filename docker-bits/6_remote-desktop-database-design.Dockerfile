@@ -17,6 +17,7 @@ RUN apt-get -y update \
     xubuntu-icon-theme \
  && clean-layer.sh
 
+# 設定環境叫做/resources
 ENV RESOURCES_PATH="/resources"
 RUN mkdir $RESOURCES_PATH
 
@@ -297,8 +298,43 @@ RUN \
 
 #MISC Configuration Area
 #Copy over desktop files. First location is dropdown, then desktop, and make them executable
+
+USER root
+# 更新並安裝所需套件
+RUN apt-get update && apt-get install -y software-properties-common && \
+    add-apt-repository -y ppa:ondrej/php && \
+    apt-get update && apt-get install -y \
+    apache2 \
+    php8.1-fpm \
+    mysql-server && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*   
+
+# 下載並安裝 XAMPP
+RUN wget -O $RESOURCES_PATH/xampp-installer.run https://sourceforge.net/projects/xampp/files/XAMPP%20Linux/8.2.4/xampp-linux-x64-8.2.4-0-installer.run && \
+    chmod +x $RESOURCES_PATH/xampp-installer.run && \
+    $RESOURCES_PATH/xampp-installer.run --mode unattended
+# 複製 XAMPP 圖標
+COPY xampp.png $RESOURCES_PATH/xampp.png
+COPY /desktop-files/xampp.desktop $RESOURCES_PATH/desktop-files/xampp.desktop
+RUN chmod +x /opt/lampp/manager-linux-x64.run
+
+# 下載並安裝 phpMyAdmin
+RUN wget https://www.phpmyadmin.net/downloads/phpMyAdmin-latest-all-languages.tar.gz \
+    && tar xvf phpMyAdmin-latest-all-languages.tar.gz \
+    && mv phpMyAdmin-*-all-languages /opt/lampp/htdocs/phpmyadmin \
+    && chown -R nobody:root /opt/lampp/htdocs/phpmyadmin 
+
+# 複製 phpMyAdmin 圖標
+COPY PhpMyAdmin.png $RESOURCES_PATH/PhpMyAdmin.png    
 COPY /desktop-files /usr/share/applications
 COPY /desktop-files $RESOURCES_PATH/desktop-files
+
+
+# 下載並安裝 phpMyAdmin
+#RUN wget https://www.phpmyadmin.net/downloads/phpMyAdmin-latest-all-languages.tar.gz \
+#    && tar xvf phpMyAdmin-latest-all-languages.tar.gz -C /var/www/ \
+#    && mv /var/www/phpMyAdmin-* /var/www/phpmyadmin \
+#    && rm phpMyAdmin-latest-all-languages.tar.gz
 
 #Copy over French Language files
 COPY French/mo-files/ /usr/share/locale/fr/LC_MESSAGES
@@ -425,7 +461,6 @@ RUN apt update \
     && rm dayisetup.sh \
     && rm dayi3.cin
 
-
 USER $NB_USER 
 COPY --chown=$NB_USER:100 www.conf /etc/php/8.1/fpm/pool.d/www.conf
 COPY php8.1-fpm /etc/init.d/php8.1-fpm
@@ -434,8 +469,7 @@ COPY php8.1-fpm /etc/init.d/php8.1-fpm
 COPY --chown=$NB_USER:100 tinyfilemanager.php /var/www/html/index.php 
 
 COPY start-remote-desktop.sh /usr/local/bin/
-COPY start-remote-desktop.sh /usr/local/bin/
+
 
 USER $NB_USER
 
-## 先把原先的架構上傳

@@ -185,9 +185,9 @@ RUN /bin/bash $RESOURCES_PATH/firefox.sh --install && \
     clean-layer.sh
 
 #Copy the Traditional Chinese language pack file
-RUN wget https://addons.mozilla.org/firefox/downloads/file/4101962/traditional_chinese_zh_tw_l-112.0.20230424.110519.xpi  -O langpack-zh_TW@firefox.mozilla.org.xpi && \
-    mkdir --parents /usr/lib/firefox/distribution/extensions/ && \
-    mv langpack-zh_TW@firefox.mozilla.org.xpi /usr/lib/firefox/distribution/extensions/
+#RUN wget https://addons.mozilla.org/firefox/downloads/file/4101962/traditional_chinese_zh_tw_l-112.0.20230424.110519.xpi  -O langpack-zh_TW@firefox.mozilla.org.xpi && \
+ #   mkdir --parents /usr/lib/firefox/distribution/extensions/ && \
+  #  mv langpack-zh_TW@firefox.mozilla.org.xpi /usr/lib/firefox/distribution/extensions/
 
 #Configure and set up Firefox to start up in a specific language (depends on LANG env variable)
 COPY autoconfig.js /usr/lib/firefox/defaults/pref/
@@ -329,19 +329,19 @@ RUN apt-get update && apt-get install --yes websockify \
 #RUN pwd && echo && ls /opt/install
 
 # Install Traditional Chinese Locale and Fonts.
-RUN \
-    apt-get update && \
-    apt-get install -y locales && \
-    sed -i -e "s/# zh_TW.UTF-8 UTF-8/zh_TW.UTF-8 UTF-8/" /etc/locale.gen && \
-    dpkg-reconfigure --frontend=noninteractive locales && \
-    update-locale LANG=zh_TW.UTF-8 && \
-    clean-layer.sh
+#RUN \
+#    apt-get update && \
+#    apt-get install -y locales && \
+ #   sed -i -e "s/# zh_TW.UTF-8 UTF-8/zh_TW.UTF-8 UTF-8/" /etc/locale.gen && \
+  #  dpkg-reconfigure --frontend=noninteractive locales && \
+   # update-locale LANG=zh_TW.UTF-8 && \
+    #clean-layer.sh
 
-ENV LANG=zh_TW.UTF-8
-RUN \
-    cd /usr/local/share/fonts && \
-    wget https://fonts.gstatic.com/s/notosanstc/v26/-nF7OG829Oofr2wohFbTp9iFOQ.otf -O NotoSansTC-Regular.otf && \
-    fc-cache -f -v
+#ENV LANG=zh_TW.UTF-8
+#RUN \
+ #   cd /usr/local/share/fonts && \
+  #  wget https://fonts.gstatic.com/s/notosanstc/v26/-nF7OG829Oofr2wohFbTp9iFOQ.otf -O NotoSansTC-Regular.otf && \
+   # fc-cache -f -v
 
 #Install Miniconda
 #Has to be appended, else messes with qgis
@@ -432,6 +432,8 @@ COPY php8.1-fpm /etc/init.d/php8.1-fpm
 
 # temporary store, will move to home directory after start
 COPY --chown=$NB_USER:100 tinyfilemanager.php /var/www/html/index.php 
+
+
 
 # COPY start-remote-desktop.sh /usr/local/bin/
 COPY setup_catkin_ws.sh /usr/local/bin/
